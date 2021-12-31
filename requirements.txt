@@ -1,0 +1,5 @@
+fastapi
+pydantic
+uvicorn[standard]
+motor
+pymongo[srv]
