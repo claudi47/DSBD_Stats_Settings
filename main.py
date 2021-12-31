@@ -1,15 +1,18 @@
+import csv
+import uuid
 from typing import List
 
 import motor.motor_asyncio
 from bson import ObjectId
 from fastapi import FastAPI, Query
+
 from models import BetData
-import csv
-import uuid
 
 app = FastAPI()
-client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://claudi47:ciaoatutti@cluster0.hj3kc.mongodb.net/db_dsbd?retryWrites=true&w=majority')
+client = motor.motor_asyncio.AsyncIOMotorClient(
+    'mongodb+srv://claudi47:ciaoatutti@cluster0.hj3kc.mongodb.net/db_dsbd?retryWrites=true&w=majority')
 db = client.db_dsbd
+
 
 class PyObjectId(ObjectId):
     @classmethod
@@ -42,7 +45,6 @@ async def parsing_to_csv(bet_data: List[BetData]):
 async def calculating_stats(stat: int = Query(..., le=4, ge=1)):
     match stat:
         case 1:
-            names = await db['web_server_user'].find(projection=['username']).to_list(length=None)
-            count_names = len(names)
-            return {'names': [data['username'] for data in names], 'count': count_names}
-
+            users = db['web_server_user'].find(projection={'_id': False, 'username': True})
+            usernames = [doc['username'] async for doc in users]
+            return {'names': usernames, 'count': len(usernames)}
