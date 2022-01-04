@@ -1,5 +1,6 @@
 import csv
 import datetime
+import os
 import re
 import uuid
 from typing import List
@@ -12,7 +13,7 @@ from models import BetData, BanUser, LimitResearches, Toggle, UserBanOut, UserLi
 
 app = FastAPI()
 client = motor.motor_asyncio.AsyncIOMotorClient(
-    'mongodb+srv://claudi47:ciaoatutti@cluster0.hj3kc.mongodb.net/db_dsbd?retryWrites=true&w=majority')
+    f'mongodb://{os.getenv("DB_USERNAME")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_URL")}:{os.getenv("DB_PORT")}')
 db = client.db_dsbd
 
 
