@@ -13,7 +13,8 @@ from models import BetData, BanUser, LimitResearches, Toggle, UserBanOut, UserLi
 
 app = FastAPI()
 client = motor.motor_asyncio.AsyncIOMotorClient(
-    f'mongodb://{os.getenv("DB_USERNAME")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_URL")}:{os.getenv("DB_PORT")}')
+    f'mongodb://{os.getenv("DB_USERNAME")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_URL")}:{os.getenv("DB_PORT")}'
+    f'/{os.getenv("DB_DATABASE")}')
 db = client.db_dsbd
 
 
@@ -36,12 +37,12 @@ class PyObjectId(ObjectId):
 @app.post("/parsing")
 async def parsing_to_csv(bet_data: List[BetData]):
     # using uuid.uuid4() to get random names for our csv files
-    with open(f"{uuid.uuid4()}.csv", "w", newline="") as csv_file:
+    with open(f"/tmpfiles/{uuid.uuid4()}.csv", "w", newline="") as csv_file:
         csv_writer = csv.DictWriter(csv_file, fieldnames=BetData.__fields__.keys())
         csv_writer.writeheader()
         csv_writer.writerows(data.dict() for data in bet_data)
 
-    return csv_file.name
+    return os.path.basename(csv_file.name)
 
 
 @app.get("/stats")
