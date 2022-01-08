@@ -2,7 +2,9 @@ import datetime
 from typing import Optional
 
 from bson import ObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from main import PyObjectId
 
 
 class BetData(BaseModel):
@@ -14,6 +16,21 @@ class BetData(BaseModel):
     gol: str
     over: str
     under: str
+
+
+class User(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    username: str
+    user_identifier: str
+    max_research: int
+    ban_period: datetime
+    timestamp: datetime
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
 
 class UserBanOut(BaseModel):
     username: str
